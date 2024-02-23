@@ -3,35 +3,29 @@ FROM python:3.11-slim
 # Set the working directory in the container
 WORKDIR /workspace
 
-####### REMOVE IF NOT RESTRICTED BY SSL CERTIFICATE #######
-
-# if needed, add company's certificate to the docker container
-# You'll need to add it to the folder manually before building
-ADD zscaler.pem /usr/local/share/ca-certificates/zscaler.pem
-
-# Update certificate store
-RUN chmod 644 /usr/local/share/ca-certificates/zscaler.pem && update-ca-certificates
-
-# Environment variable for Git and Requests to use CA certificate
-ENV GIT_SSL_CAINFO=/usr/local/share/ca-certificates/zscaler.pem
-ENV REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/zscaler.pem
-
-# Update and install essential packages
-RUN apt-get update && apt-get install -y build-essential git ca-certificates
-
-#########################################################
-
-# Install uv in the container
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
 # Copy the current directory contents into the container at /workspace
 COPY . /workspace
 
-# Use uv to install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
+# Install ca-certificates, and update-ca-certificates to add a custom CA
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && update-ca-certificates
 
-# Make port 80 available to the world outside this container
+# Add certificate to the system CA bundle
+RUN cp zscaler.pem /usr/local/share/ca-certificates/zscaler.crt \
+    && update-ca-certificates
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
+# ins tall uv in the container
+RUN pip install uv
+
+# Create a virtual environment using uv --> useless here, just to compare with 
+# the uv build
+RUN uv venv
+
+# install libraries in requirements.txt
+RUN pip install --default-timeout=300 -r requirements.txt
+
+# Misc
 EXPOSE 80
-
-# Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["python", "/app/test_app.py"]
