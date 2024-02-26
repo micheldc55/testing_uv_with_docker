@@ -81,5 +81,4 @@ The results can be visualized for the 29 examples I sampled for both categories 
 
 ### Mean build times:
 
-![Mean build times](/images/docker_build_times_pip_vs_uv.png)
-
+![Mean build times](analysis/images/docker_build_times_pip_vs_uv.png)
