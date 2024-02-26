@@ -6,6 +6,7 @@ The purpose of this repository is to test whether the uv library can speed up do
 
 This is a very simple an straightforward project. I just create a Dockerfile.pip and a Dockerfile.uv and build a small Docker image installing the libraries requested in the requirements.txt file in the main directory. There is also an app folder that contains a placeholder for a Python app that would be executed if the container was deployed. If you are using VS Code, and particularly the Dev Containers extension, there is also a .devcontainers folder which will hanlde the set up needed for you to test building this image directly using the "Reopen In Container" option in VS Code.
 
+```bash
 .
 ├── .devcontainer
 │   └── devcontainer.json   --> Set up for using Dev Containers
@@ -16,6 +17,7 @@ This is a very simple an straightforward project. I just create a Dockerfile.pip
 │   └── test_app.py         --> Placeholder for Python app
 ├── requirements.txt        --> Sets up the libraries needed
 └── "certificate"           --> This should be provided by you
+```
 
 ## Motivation
 
