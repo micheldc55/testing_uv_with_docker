@@ -6,16 +6,28 @@ The purpose of this repository is to test whether the uv library can speed up do
 
 This is a very simple an straightforward project. I just create a Dockerfile.pip and a Dockerfile.uv and build a small Docker image installing the libraries requested in the requirements.txt file in the main directory. There is also an app folder that contains a placeholder for a Python app that would be executed if the container was deployed. If you are using VS Code, and particularly the Dev Containers extension, there is also a .devcontainers folder which will hanlde the set up needed for you to test building this image directly using the "Reopen In Container" option in VS Code.
 
+```bash
 .
 ├── .devcontainer
-│   └── devcontainer.json   --> Set up for using Dev Containers
-├── Dockerfile.pip          --> Dockerfile using "pip"
-├── Dockerfile.uv           --> Dockerfile using "uv"
-├── README.md               
-├── app                     
-│   └── test_app.py         --> Placeholder for Python app
-├── requirements.txt        --> Sets up the libraries needed
-└── "certificate"           --> This should be provided by you
+│   └── devcontainer.json           --> Set up for using Dev Containers
+├── Dockerfile.pip                  --> Dockerfile using "pip"
+├── Dockerfile.uv                   --> Dockerfile using "uv"
+├── README.md
+├── analysis
+│   ├── images
+│   │   ├── docker_build_times_pip_vs_uv.png
+│   │   └── hist_docker_build_times_pip_vs_uv.png
+│   ├── parse_results.html          --> Results in html format
+│   └── parse_results.ipynb         --> Results in Jupyter notebook fmt
+├── app
+│   └── test_app.py                 --> Placeholder for Python app
+├── docker_build_times_pip.txt
+├── docker_build_times_uv.txt
+├── requirements.txt
+├── run_docker_build_experiment.sh  --> Main script to run experiments
+└── zscaler.pem                     --> This should be provided by you
+
+```
 
 ## Motivation
 
@@ -27,73 +39,66 @@ Docker is a fantastic tool for containarizing applications and it is in my opini
 
 One problem I've encountered with Docker is how much it takes for container images to build. For simple applications, most of the building time is spent on the dependencies installation. This is annoying when you are trying to set up a project's dependencies, because you may need to rebuild the image a couple of times, and if you change dependencies you will loose the cache for that line, which means reinstalling again. While this may not sound like a terrible problem, it can slow down development and make you loose focus.
 
-On the 23rd of Ferbruary (2024), I stumbled upon this `uv` library by (astral-sh)[https://astral.sh/] which implements a dependency solver in Rust. I immediately thought of the Docker build times and figured I should test this for myself. The link to the library repo can be found (here)[https://github.com/astral-sh/uv] and it's reported to install dependencies 10-100x faster. Benchmarks for cold and warm installation tests is also provided in their (benchmarks page)[https://github.com/astral-sh/uv/blob/main/BENCHMARKS.md].
+On the 23rd of Ferbruary (2024), I stumbled upon this `uv` library by [astral-sh](https://astral.sh/) which implements a dependency solver in Rust. I immediately thought of the Docker build times and figured I should test this for myself. The link to the library repo can be found [here](https://github.com/astral-sh/uv) and it's reported to install dependencies 10-100x faster. Benchmarks for cold and warm installation tests is also provided in their [benchmarks page](https://github.com/astral-sh/uv/blob/main/BENCHMARKS.md).
+
+
+## Docker Build Time Experiment Guide
+
+This guide outlines steps to conduct a quick experiment for measuring the build times of Docker images using Dockerfile.pip and Dockerfile.uv. The experiment is automated using a Bash script, running multiple build iterations for each Dockerfile to gather reliable timing data. You can change the number of experiments to have a more robust estimate of the time.
+
+### Prerequisites
+- Docker installed and running on your machine.
+- Bash shell (Linux/MacOS) or WSL (Windows).
+
+### Experiment Setup
+Prepare Your Environment: Ensure your Docker environment is set up and that you have a Bash shell available for running the script. Next, open a Bash terminal.
+
+Download the Experiment Script: Make the project bash script executable by running:
+
+```bash
+chmod +x run_docker_build_experiment.sh
+```
+
+Now, we just have to select the right number of experiments and run the tests. From a statistical standpoint, you should at least select 20-30 samples from each (using pip and uv) to make a more robust conclusion. I used 30 and dropped the first one because it seemed to be an outlier (see the files included in the analysis).
+
+You can run the file by simply executing this in your terminal (this will run 30 experiments):
+
+```bash
+./run_docker_build_experiment.sh
+```
+
+You can alternatively pass the number of experiments you want to run, by substituting the "num_experiments" value for any integer in the following command:
+
+```bash
+./run_docker_build_experiment.sh num_experiments
+```
+
+If you run "./run_docker_build_experiment.sh 50" you would run 50 experiments. The results will be saved to a file in the main directory of the project.
 
 ## Results
 
+The results can be visualized for the 29 examples I sampled for both categories in the analysis/parse_results.html file. This was generated from the parse_results.ipynb notebook located in the same directory.
 
-# Docker Build Time Experiment Guide
+### Mean build times:
 
-This guide outlines the steps to test the build times for our Docker images defined in `Dockerfile.pip` and `Dockerfile.uv`. The objective is to provide a robust methodology for measuring and comparing the build times of these Dockerfiles.
+![Mean build times](analysis/images/docker_build_times_pip_vs_uv.png)
 
-## Pre-requisites
+The results above show the mean build times for both pip and uv containers. There is a clear difference overall in both, even though locally some of the builds might differ in total execution time.
 
-- Docker installed on your machine.
-- Clone the repository or ensure you have the latest version of the project.
+![Build time distribution](analysis/images/hist_docker_build_times_pip_vs_uv.png)
 
-## Experiment Setup
-
-1. **Prepare Your Environment**:
-    - Ensure Docker is running on your system.
-    - Navigate to the project's root directory in your terminal.
-
-2. **Define Build Commands**:
-    - For `Dockerfile.pip`, we will use the tag `projectname-pip`:
-        ```
-        docker build -f Dockerfile.pip -t projectname-pip .
-        ```
-    - For `Dockerfile.uv`, we will use the tag `projectname-uv`:
-        ```
-        docker build -f Dockerfile.uv -t projectname-uv .
-        ```
-
-## Conducting the Experiment
-
-1. **Clean Docker Cache (Optional)**:
-    To ensure that the build times are not affected by Docker's cache, you can optionally clear the Docker cache before each build. Warning: This will remove all cached layers. Use the following command:
-    ```
-    docker system prune -a
-    ```
-    Confirm when prompted.
-
-2. **Measure Build Time**:
-    - To measure the build time accurately, prepend the build command with `time`. This works on most Unix-like systems. If you're using a platform where `time` is not available, you might need to use alternative timing methods.
-    - For `Dockerfile.pip`:
-        ```
-        time docker build -f Dockerfile.pip -t projectname-pip .
-        ```
-    - For `Dockerfile.uv`:
-        ```
-        time docker build -f Dockerfile.uv -t projectname-uv .
-        ```
-
-3. **Record the Results**:
-    - After each build, Docker will output the total time taken. Ensure you note this down.
-    - For a more detailed time analysis, consider using Docker's `--progress=plain` option to get more granular build timing information.
-
-4. **Repeat the Builds**:
-    - To ensure accuracy, repeat the build process for each Dockerfile multiple times. Three to five times is a good range for getting a reliable measure.
-    - Record all results and calculate the average build time for each Dockerfile.
-
-## Analyzing the Results
-
-- Compare the average build times of `Dockerfile.pip` and `Dockerfile.uv`.
-- Analyze which stages of the build process take the most time and if there are any significant differences between the two Dockerfiles.
-- Consider factors like base image size, the efficiency of caching layers, and specific commands used in each Dockerfile that might impact build times.
+This results also show that the distributions for both seem to be centered at different mean values. Check the html file of the Jupyter notebook for more details.
 
 ## Conclusion
 
-- Document your findings and conclusions from the experiment.
-- Discuss potential optimizations based on your analysis.
+Results were determined to be statistically significant: the mean time for building a docker container using uv is significantly smaller than using pip. The difference in the tests was computed to be around a 50% reduction in time, although this is highly sensible to the number of libraries.
 
-By following this guide, you should be able to perform a detailed and robust comparison of the build times for `Dockerfile.pip` and `Dockerfile.uv`.
+It's also important to note that I've tested this behind a corporate firewall, and that in reality both times are probably smaller. Docker fails a lot of times due to timeouts when there are certificate and connection restrictions. This was just a way to see if this library was a good fit for what I needed.
+
+Finally, everything in the results (or even your own if you keep working on this) can be exported using jupyter notebooks + nbconvert. If you have nbconvert installed, simply run:
+
+```bash
+jupyter nbconvert --to html analysis/parse_results.ipynb
+```
+
+To create a new notebook with the updated results!
