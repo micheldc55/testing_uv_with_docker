@@ -39,7 +39,7 @@ Docker is a fantastic tool for containarizing applications and it is in my opini
 
 One problem I've encountered with Docker is how much it takes for container images to build. For simple applications, most of the building time is spent on the dependencies installation. This is annoying when you are trying to set up a project's dependencies, because you may need to rebuild the image a couple of times, and if you change dependencies you will loose the cache for that line, which means reinstalling again. While this may not sound like a terrible problem, it can slow down development and make you loose focus.
 
-On the 23rd of Ferbruary (2024), I stumbled upon this `uv` library by (astral-sh)[https://astral.sh/] which implements a dependency solver in Rust. I immediately thought of the Docker build times and figured I should test this for myself. The link to the library repo can be found (here)[https://github.com/astral-sh/uv] and it's reported to install dependencies 10-100x faster. Benchmarks for cold and warm installation tests is also provided in their (benchmarks page)[https://github.com/astral-sh/uv/blob/main/BENCHMARKS.md].
+On the 23rd of Ferbruary (2024), I stumbled upon this `uv` library by [astral-sh](https://astral.sh/) which implements a dependency solver in Rust. I immediately thought of the Docker build times and figured I should test this for myself. The link to the library repo can be found [here](https://github.com/astral-sh/uv) and it's reported to install dependencies 10-100x faster. Benchmarks for cold and warm installation tests is also provided in their [benchmarks page](https://github.com/astral-sh/uv/blob/main/BENCHMARKS.md).
 
 
 ## Docker Build Time Experiment Guide
@@ -81,5 +81,5 @@ The results can be visualized for the 29 examples I sampled for both categories 
 
 ### Mean build times:
 
-!mean_build_hist[/images/docker_build_times_pip_vs_uv.png]
+![Mean build times](/images/docker_build_times_pip_vs_uv.png)
 
