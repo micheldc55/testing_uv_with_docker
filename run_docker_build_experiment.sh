@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # you can change the number ofd experiments here:
-num_experiments=10
+num_experiments={1:-30}
 
 dockerfile_pip="Dockerfile.pip"
 dockerfile_uv="Dockerfile.uv"

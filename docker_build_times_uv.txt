@@ -18,3 +18,13 @@ Build time for Dockerfile.uv: 56 seconds
 Build time for Dockerfile.uv: 53 seconds
 Build time for Dockerfile.uv: 14 seconds
 Build time for Dockerfile.uv: 41 seconds
+Build time for Dockerfile.uv: 48 seconds
+Build time for Dockerfile.uv: 32 seconds
+Build time for Dockerfile.uv: 37 seconds
+Build time for Dockerfile.uv: 7 seconds
+Build time for Dockerfile.uv: 38 seconds
+Build time for Dockerfile.uv: 47 seconds
+Build time for Dockerfile.uv: 43 seconds
+Build time for Dockerfile.uv: 51 seconds
+Build time for Dockerfile.uv: 44 seconds
+Build time for Dockerfile.uv: 46 seconds

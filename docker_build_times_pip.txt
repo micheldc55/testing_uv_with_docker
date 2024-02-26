@@ -18,3 +18,13 @@ Build time for Dockerfile.pip: 118 seconds
 Build time for Dockerfile.pip: 115 seconds
 Build time for Dockerfile.pip: 117 seconds
 Build time for Dockerfile.pip: 103 seconds
+Build time for Dockerfile.pip: 63 seconds
+Build time for Dockerfile.pip: 57 seconds
+Build time for Dockerfile.pip: 14 seconds
+Build time for Dockerfile.pip: 35 seconds
+Build time for Dockerfile.pip: 51 seconds
+Build time for Dockerfile.pip: 106 seconds
+Build time for Dockerfile.pip: 101 seconds
+Build time for Dockerfile.pip: 99 seconds
+Build time for Dockerfile.pip: 81 seconds
+Build time for Dockerfile.pip: 80 seconds
