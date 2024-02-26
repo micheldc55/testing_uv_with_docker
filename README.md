@@ -82,3 +82,23 @@ The results can be visualized for the 29 examples I sampled for both categories 
 ### Mean build times:
 
 ![Mean build times](analysis/images/docker_build_times_pip_vs_uv.png)
+
+The results above show the mean build times for both pip and uv containers. There is a clear difference overall in both, even though locally some of the builds might differ in total execution time.
+
+![Build time distribution](analysis/images/hist_docker_build_times_pip_vs_uv.png)
+
+This results also show that the distributions for both seem to be centered at different mean values. Check the html file of the Jupyter notebook for more details.
+
+## Conclusion
+
+Results were determined to be statistically significant: the mean time for building a docker container using uv is significantly smaller than using pip. The difference in the tests was computed to be around a 50% reduction in time, although this is highly sensible to the number of libraries.
+
+It's also important to note that I've tested this behind a corporate firewall, and that in reality both times are probably smaller. Docker fails a lot of times due to timeouts when there are certificate and connection restrictions. This was just a way to see if this library was a good fit for what I needed.
+
+Finally, everything in the results (or even your own if you keep working on this) can be exported using jupyter notebooks + nbconvert. If you have nbconvert installed, simply run:
+
+```bash
+jupyter nbconvert --to html analysis/parse_results.ipynb
+```
+
+To create a new notebook with the updated results!
