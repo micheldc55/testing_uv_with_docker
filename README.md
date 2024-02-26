@@ -9,14 +9,24 @@ This is a very simple an straightforward project. I just create a Dockerfile.pip
 ```bash
 .
 ├── .devcontainer
-│   └── devcontainer.json   --> Set up for using Dev Containers
-├── Dockerfile.pip          --> Dockerfile using "pip"
-├── Dockerfile.uv           --> Dockerfile using "uv"
-├── README.md               
-├── app                     
-│   └── test_app.py         --> Placeholder for Python app
-├── requirements.txt        --> Sets up the libraries needed
-└── "certificate"           --> This should be provided by you
+│   └── devcontainer.json           --> Set up for using Dev Containers
+├── Dockerfile.pip                  --> Dockerfile using "pip"
+├── Dockerfile.uv                   --> Dockerfile using "uv"
+├── README.md
+├── analysis
+│   ├── images
+│   │   ├── docker_build_times_pip_vs_uv.png
+│   │   └── hist_docker_build_times_pip_vs_uv.png
+│   ├── parse_results.html          --> Results in html format
+│   └── parse_results.ipynb         --> Results in Jupyter notebook fmt
+├── app
+│   └── test_app.py                 --> Placeholder for Python app
+├── docker_build_times_pip.txt
+├── docker_build_times_uv.txt
+├── requirements.txt
+├── run_docker_build_experiment.sh  --> Main script to run experiments
+└── zscaler.pem                     --> This should be provided by you
+
 ```
 
 ## Motivation
@@ -71,4 +81,5 @@ The results can be visualized for the 29 examples I sampled for both categories 
 
 ### Mean build times:
 
-!(mean_build_hist)[/images/docker_build_times_pip_vs_uv.png]
+!mean_build_hist[/images/docker_build_times_pip_vs_uv.png]
+
